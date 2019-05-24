@@ -4,11 +4,13 @@ import (
 	"context"
 
 	postgresqlv1alpha1 "github.com/baijum/postgresql-operator/pkg/apis/postgresql/v1alpha1"
+	appsv1 "k8s.io/api/apps/v1"
 	corev1 "k8s.io/api/core/v1"
 	"k8s.io/apimachinery/pkg/api/errors"
 	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
 	"k8s.io/apimachinery/pkg/runtime"
 	"k8s.io/apimachinery/pkg/types"
+	"k8s.io/apimachinery/pkg/util/intstr"
 	"sigs.k8s.io/controller-runtime/pkg/client"
 	"sigs.k8s.io/controller-runtime/pkg/controller"
 	"sigs.k8s.io/controller-runtime/pkg/controller/controllerutil"
@@ -17,7 +19,6 @@ import (
 	"sigs.k8s.io/controller-runtime/pkg/reconcile"
 	logf "sigs.k8s.io/controller-runtime/pkg/runtime/log"
 	"sigs.k8s.io/controller-runtime/pkg/source"
-	appsv1 "k8s.io/api/apps/v1"
 )
 
 var log = logf.Log.WithName("controller_database")
@@ -53,7 +54,18 @@ func add(mgr manager.Manager, r reconcile.Reconciler) error {
 
 	// TODO(user): Modify this to be the types you create that are owned by the primary resource
 	// Watch for changes to secondary resource Pods and requeue the owner Database
-	err = c.Watch(&source.Kind{Type: &corev1.Pod{}}, &handler.EnqueueRequestForOwner{
+
+	// Watch for Deployment Update and Delete event
+	err = c.Watch(&source.Kind{Type: &appsv1.Deployment{}}, &handler.EnqueueRequestForOwner{
+		IsController: true,
+		OwnerType:    &postgresqlv1alpha1.Database{},
+	})
+	if err != nil {
+		return err
+	}
+
+	// Watch for Service Update and Delete event
+	err = c.Watch(&source.Kind{Type: &corev1.Service{}}, &handler.EnqueueRequestForOwner{
 		IsController: true,
 		OwnerType:    &postgresqlv1alpha1.Database{},
 	})
@@ -122,13 +134,66 @@ func (r *ReconcileDatabase) Reconcile(request reconcile.Request) (reconcile.Resu
 		return reconcile.Result{}, err
 	}
 
+	service := newServiceForCR(instance)
+	// Set Database instance as the owner and controller
+	if err := controllerutil.SetControllerReference(instance, service, r.scheme); err != nil {
+		return reconcile.Result{}, err
+	}
+
+	// Check if this Service already exists
+	serviceFound := &corev1.Service{}
+	err = r.client.Get(context.TODO(), types.NamespacedName{Name: service.Name, Namespace: service.Namespace}, serviceFound)
+	if err != nil && errors.IsNotFound(err) {
+		reqLogger.Info("Creating a new Service", "Service.Namespace", service.Namespace, "Service.Name", service.Name)
+		err = r.client.Create(context.TODO(), service)
+		if err != nil {
+			return reconcile.Result{}, err
+		}
+		// Service created successfully - don't requeue
+		return reconcile.Result{}, nil
+	} else if err != nil {
+		return reconcile.Result{}, err
+	}
+
 	return reconcile.Result{}, nil
+}
+
+func newServiceForCR(cr *postgresqlv1alpha1.Database) *corev1.Service {
+	labels := map[string]string{
+		"app": cr.Name,
+	}
+	var svcPorts []corev1.ServicePort
+	svcPort := corev1.ServicePort{
+		Name:       cr.Name + "-postgresql",
+		Port:       8080,
+		Protocol:   corev1.ProtocolTCP,
+		TargetPort: intstr.FromInt(8080),
+	}
+	svcPorts = append(svcPorts, svcPort)
+	svc := &corev1.Service{
+		ObjectMeta: metav1.ObjectMeta{
+			Name:      cr.Name + "-postgresql",
+			Namespace: cr.Namespace,
+			Labels:    labels,
+		},
+		Spec: corev1.ServiceSpec{
+			Ports: svcPorts,
+			Selector: map[string]string{
+				"app": cr.Name,
+			},
+		},
+	}
+	return svc
 }
 
 func newDeploymentForCR(cr *postgresqlv1alpha1.Database) *appsv1.Deployment {
 	labels := map[string]string{
 		"app": cr.Name,
 	}
+	containerPorts := []corev1.ContainerPort{{
+		ContainerPort: 8080,
+		Protocol:      corev1.ProtocolTCP,
+	}}
 	deployment := &appsv1.Deployment{
 		ObjectMeta: metav1.ObjectMeta{
 			Name:      cr.Name + "-postgresql",
@@ -154,6 +219,7 @@ func newDeploymentForCR(cr *postgresqlv1alpha1.Database) *appsv1.Deployment {
 						{
 							Name:  cr.Spec.ImageName,
 							Image: cr.Spec.Image,
+							Ports: containerPorts,
 						},
 					},
 				},
