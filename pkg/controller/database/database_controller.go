@@ -138,9 +138,8 @@ func newPodForCR(cr *postgresqlv1alpha1.Database) *corev1.Pod {
 		Spec: corev1.PodSpec{
 			Containers: []corev1.Container{
 				{
-					Name:    "busybox",
-					Image:   "busybox",
-					Command: []string{"sleep", "3600"},
+					Name:  cr.Spec.ImageName,
+					Image: cr.Spec.Image,
 				},
 			},
 		},
