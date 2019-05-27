@@ -165,9 +165,9 @@ func newServiceForCR(cr *postgresqlv1alpha1.Database) *corev1.Service {
 	var svcPorts []corev1.ServicePort
 	svcPort := corev1.ServicePort{
 		Name:       cr.Name + "-postgresql",
-		Port:       8080,
+		Port:       5432,
 		Protocol:   corev1.ProtocolTCP,
-		TargetPort: intstr.FromInt(8080),
+		TargetPort: intstr.FromInt(5432),
 	}
 	svcPorts = append(svcPorts, svcPort)
 	svc := &corev1.Service{
@@ -191,7 +191,7 @@ func newDeploymentForCR(cr *postgresqlv1alpha1.Database) *appsv1.Deployment {
 		"app": cr.Name,
 	}
 	containerPorts := []corev1.ContainerPort{{
-		ContainerPort: 8080,
+		ContainerPort: 5432,
 		Protocol:      corev1.ProtocolTCP,
 	}}
 	deployment := &appsv1.Deployment{
