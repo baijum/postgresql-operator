@@ -220,6 +220,12 @@ func newDeploymentForCR(cr *postgresqlv1alpha1.Database) *appsv1.Deployment {
 							Name:  cr.Spec.ImageName,
 							Image: cr.Spec.Image,
 							Ports: containerPorts,
+							Env: []corev1.EnvVar{
+								{
+									Name:  "POSTGRES_PASSWORD",
+									Value: "password",
+								},
+							},
 						},
 					},
 				},
