@@ -73,6 +73,15 @@ func add(mgr manager.Manager, r reconcile.Reconciler) error {
 		return err
 	}
 
+	// Watch for Secret Update and Delete event
+	err = c.Watch(&source.Kind{Type: &corev1.Secret{}}, &handler.EnqueueRequestForOwner{
+		IsController: true,
+		OwnerType:    &postgresqlv1alpha1.Database{},
+	})
+	if err != nil {
+		return err
+	}
+
 	return nil
 }
 
