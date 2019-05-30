@@ -155,6 +155,26 @@ func (r *ReconcileDatabase) Reconcile(request reconcile.Request) (reconcile.Resu
 		return reconcile.Result{}, err
 	}
 
+	secret := newSecretForCR(instance)
+	// Set Database instance as the owner and controller
+	if err := controllerutil.SetControllerReference(instance, secret, r.scheme); err != nil {
+		return reconcile.Result{}, err
+	}
+	// Check if this Secret already exists
+	secretFound := &corev1.Secret{}
+	err = r.client.Get(context.TODO(), types.NamespacedName{Name: secret.Name, Namespace: secret.Namespace}, secretFound)
+	if err != nil && errors.IsNotFound(err) {
+		reqLogger.Info("Creating a new Secret", "Secret.Namespace", secret.Namespace, "Secret.Name", secret.Name)
+		err = r.client.Create(context.TODO(), secret)
+		if err != nil {
+			return reconcile.Result{}, err
+		}
+		// Secret created successfully - don't requeue
+		return reconcile.Result{}, nil
+	} else if err != nil {
+		return reconcile.Result{}, err
+	}
+
 	return reconcile.Result{}, nil
 }
 
@@ -184,6 +204,23 @@ func newServiceForCR(cr *postgresqlv1alpha1.Database) *corev1.Service {
 		},
 	}
 	return svc
+}
+
+func newSecretForCR(cr *postgresqlv1alpha1.Database) *corev1.Secret {
+	labels := map[string]string{
+		"app": cr.Name,
+	}
+
+	secret := &corev1.Secret{
+		ObjectMeta: metav1.ObjectMeta{
+			Name:      cr.Name + "-postgresql",
+			Namespace: cr.Namespace,
+			Labels:    labels,
+		},
+		Type: corev1.SecretTypeOpaque,
+		Data: map[string][]byte{"password": []byte("password")},
+	}
+	return secret
 }
 
 func newDeploymentForCR(cr *postgresqlv1alpha1.Database) *appsv1.Deployment {
