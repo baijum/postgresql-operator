@@ -1,0 +1,130 @@
+apiVersion: operators.coreos.com/v1alpha1
+kind: ClusterServiceVersion
+metadata:
+  name: postgresql-operator.v0.0.1
+  namespace: placeholder
+  annotations:
+    capabilities: Full Lifecycle
+    categories: "Database"
+    description: The operator that manages PostgreSQL databases.
+spec:
+  displayName: PostgreSQL Database
+  description: "The operator that manages PostgreSQL databases."
+  version: 0.0.1
+  maturity: alpha
+  provider:
+    name: Red Hat
+  labels:
+    name: postgresql-operator
+  selector:
+    matchLabels:
+      name: postgresql-operator
+  # Install
+  installModes:
+    - supported: true
+      type: OwnNamespace
+    - supported: true
+      type: SingleNamespace
+    - supported: false
+      type: MultiNamespace
+    - supported: true
+      type: AllNamespaces
+  install:
+    strategy: deployment
+    spec:
+      # Role(s)
+      clusterPermissions:
+        - serviceAccountName: postgresql-operator
+          rules:
+            - apiGroups:
+                - ""
+              resources:
+                - pods
+                - services
+                - endpoints
+                - persistentvolumeclaims
+                - events
+                - configmaps
+                - secrets
+              verbs:
+                - "*"
+            - apiGroups:
+                - apps
+              resources:
+                - deployments
+                - daemonsets
+                - replicasets
+                - statefulsets
+              verbs:
+                - "*"
+            - apiGroups:
+                - monitoring.coreos.com
+              resources:
+                - servicemonitors
+              verbs:
+                - get
+                - create
+            - apiGroups:
+                - apps
+              resourceNames:
+                - postgresql-operator
+              resources:
+                - deployments/finalizers
+              verbs:
+                - update
+            - apiGroups:
+                - postgresql.baiju.dev
+              resources:
+                - "*"
+              verbs:
+                - "*"
+      # Deployment(s)
+      deployments:
+        - name: postgresql-operator
+          spec:
+            replicas: 1
+            selector:
+              matchLabels:
+                name: postgresql-operator
+            template:
+              metadata:
+                labels:
+                  name: postgresql-operator
+              spec:
+                serviceAccountName: postgresql-operator
+                containers:
+                  - name: postgresql-operator
+                    image: REPLACE_IMAGE
+                    imagePullPolicy: Always
+                    command:
+                      - postgresql-operator
+                    env:
+                      - name: WATCH_NAMESPACE
+                        valueFrom:
+                          fieldRef:
+                            fieldPath: metadata.namespace
+                      - name: POD_NAME
+                        valueFrom:
+                          fieldRef:
+                            fieldPath: metadata.name
+                      - name: OPERATOR_NAME
+                        value: postgresql-operator
+  # CRD(s)
+  customresourcedefinitions:
+    owned:
+      - name: databases.postgresql.baiju.dev
+        group: postgresql.baiju.dev
+        version: v1alpha1
+        kind: Database
+        displayName: Database
+        description: Describes how an application component is built and deployed.
+        resources:
+          - kind: Pod
+            version: v1
+        specDescriptors: {}
+        statusDescriptors:
+          - description: Secret to hold access password
+            displayName: Password Secret
+            path: passwordSecret
+            x-descriptors:
+              - urn:alm:descriptor:io.servicebindingrequest

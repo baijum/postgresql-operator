@@ -178,7 +178,13 @@ func (r *ReconcileDatabase) Reconcile(request reconcile.Request) (reconcile.Resu
 		if err != nil {
 			return reconcile.Result{}, err
 		}
-		// Secret created successfully - don't requeue
+		// Secret created successfully update status with the reference
+		instance.Status.PasswordSecret = secret.Name
+		err := r.client.Status().Update(context.TODO(), instance)
+		if err != nil {
+			log.Error(err, "Failed to update status")
+			return reconcile.Result{}, err
+		}
 		return reconcile.Result{}, nil
 	} else if err != nil {
 		return reconcile.Result{}, err
