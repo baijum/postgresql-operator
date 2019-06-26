@@ -54,7 +54,7 @@ uninstall-operator:
 	@-oc delete sub postgresql -n openshift-operators
 	@-oc delete catsrc installed-custom-openshift-operators -n openshift-operators
 	@-oc delete csc installed-custom-openshift-operators -n openshift-marketplace
-	@-oc delete opsrc postgresql-operator -n openshift-marketplace
+	@-oc delete opsrc db-operators -n openshift-marketplace
 	@-oc delete crd databases.postgresql.baiju.dev
 	@-oc delete deploy postgres-operator -n openshift-operators
 	@-oc delete csv postgresql-operator.v$(POSTGRESQL_OPERATOR_VERSION) -n openshift-operators
