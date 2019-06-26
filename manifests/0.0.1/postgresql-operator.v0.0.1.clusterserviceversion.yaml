@@ -4,7 +4,7 @@ metadata:
   name: postgresql-operator.v0.0.1
   namespace: placeholder
   annotations:
-    alm-examples: '[{"apiVersion":"postgresql.baiju.dev/v1alpha1","kind":"Database","metadata":{"name":"example-database"},"spec":{"image":"docker.io/postgres","imageName":"postgres"}}]'
+    alm-examples: '[{"apiVersion":"postgresql.baiju.dev/v1alpha1","kind":"Database","metadata":{"name":"demo-database","namespace":"openshift-operators"},"spec":{"image":"docker.io/postgres","imageName":"postgres"}}]'
     capabilities: Full Lifecycle
     categories: 'Database'
     containerImage: REPLACE_IMAGE

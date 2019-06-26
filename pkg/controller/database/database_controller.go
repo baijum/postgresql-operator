@@ -24,6 +24,7 @@ import (
 var log = logf.Log.WithName("controller_database")
 
 const (
+	// ServiceName is the name of the service
 	ServiceName = "postgresql"
 )
 
@@ -52,7 +53,6 @@ func add(mgr manager.Manager, r reconcile.Reconciler) error {
 		return err
 	}
 
-	// TODO(user): Modify this to be the types you create that are owned by the primary resource
 	// Watch for changes to secondary resource Pods and requeue the owner Database
 
 	// Watch for Deployment Update and Delete event
@@ -98,7 +98,6 @@ type ReconcileDatabase struct {
 
 // Reconcile reads that state of the cluster for a Database object and makes changes based on the state read
 // and what is in the Database.Spec
-// TODO(user): Modify this Reconcile function to implement your Controller logic.  This example creates
 // a Pod as an example
 // Note:
 // The Controller will requeue the Request to be processed again if the returned error is non-nil or
