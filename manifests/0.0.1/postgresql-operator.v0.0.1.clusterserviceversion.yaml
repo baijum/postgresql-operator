@@ -145,8 +145,19 @@ spec:
             displayName: PostgreSQL database image name
             path: imageName
         statusDescriptors:
-          - description: Secret to hold access password
-            displayName: Password Secret
-            path: passwordSecret
+          - description: Name of the Secret to hold the DB access password
+            displayName: DB Password Secret
+            path: dbPassword
+            x-descriptors:
+              - urn:alm:descriptor:io.kubernetes:Secret
+              - urn:alm:descriptor:io.servicebindingrequest:secret:password
+          - description: Database connection IP address
+            displayName: DB IP address
+            path: dbConnectionIP
+            x-descriptors:
+              - urn:alm:descriptor:io.servicebindingrequest
+          - description: Database connection port
+            displayName: DB port
+            path: dbConnectionPort
             x-descriptors:
               - urn:alm:descriptor:io.servicebindingrequest

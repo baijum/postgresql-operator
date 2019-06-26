@@ -157,8 +157,9 @@ func (r *ReconcileDatabase) Reconcile(request reconcile.Request) (reconcile.Resu
 		if err != nil {
 			return reconcile.Result{}, err
 		}
-		// Service created successfully - don't requeue
-		return reconcile.Result{}, nil
+		// Service created successfully update status with the connection details
+		instance.Status.DBConnectionIP = service.Spec.ClusterIP
+		instance.Status.DBConnectionPort = service.Spec.Ports[0].TargetPort.IntVal
 	} else if err != nil {
 		return reconcile.Result{}, err
 	}
@@ -178,14 +179,15 @@ func (r *ReconcileDatabase) Reconcile(request reconcile.Request) (reconcile.Resu
 			return reconcile.Result{}, err
 		}
 		// Secret created successfully update status with the reference
-		instance.Status.PasswordSecret = secret.Name
-		err := r.client.Status().Update(context.TODO(), instance)
-		if err != nil {
-			log.Error(err, "Failed to update status")
-			return reconcile.Result{}, err
-		}
-		return reconcile.Result{}, nil
+		instance.Status.DBPassword = secret.Name
 	} else if err != nil {
+		return reconcile.Result{}, err
+	}
+
+	// Update status
+	err = r.client.Status().Update(context.TODO(), instance)
+	if err != nil {
+		log.Error(err, "Failed to update status")
 		return reconcile.Result{}, err
 	}
 
