@@ -4,16 +4,30 @@ metadata:
   name: postgresql-operator.v0.0.1
   namespace: placeholder
   annotations:
+    alm-examples: '[{"apiVersion":"postgresql.baiju.dev/v1alpha1","kind":"Database","metadata":{"name":"example-database"},"spec":{"image":"docker.io/postgres","imageName":"postgres"}}]'
     capabilities: Full Lifecycle
     categories: "Database"
+    containerImage: REPLACE_IMAGE
+    createdAt: 'REPLACE_CREATED_AT'
     description: The operator that manages PostgreSQL databases.
 spec:
   displayName: PostgreSQL Database
   description: "The operator that manages PostgreSQL databases."
+  icon:
+    - base64data: iVBORw0KGgoAAAANSUhEUgAAAIAAAACABAMAAAAxEHz4AAAQ7HpUWHRSYXcgcHJvZmlsZSB0eXBlIGV4aWYAAHjarZppdiQhDoT/c4o5AvtyHEDw3txgjj+fyLS77Kp2uxe721XGmYAUUihElln/++82/+ErpZRNTKXmlrPlK7bYfOdNtdfX9epsPD8fhs7vH8bN+x88Q4HXcP2a1319Zzz9uKHEe3x8HDdl3vPUeyL3PvH5Crqyvpd7R/dEwV/j7v7dtPuGnh/Muf/7eU97T/7591hwhiTmC974FVyw189rpcAuQgud18xPHzIX2lB5n/hNR9Kz/8y761448P3dJ//Zt52FH+64JnozK3/y0z3u0qfx8L6M/7Aj599X9o87avPNlc/+21vq3uuyrkfiqMV8G/VmynnHhQN3hnNb5rvwP/G+nO/Gd7Xd6lKCqcPYwS/NeXy9XXTiuttundfpJluMfvnCq/fThzNWQ/HNzwNK1G+3fTHgIyDiwwS5wLB/34s76zZdj8UqK4vjSu+YzHHHh2/zeeBPvz9MtLeGuXO2vvuKfXkNWbahyOlPrgICt2+fpuNfZ64X+/lLgQ0gmI6bKwZ2O64pRnI/YiscnINNhkujvUB2Re4JcBFrJzbjAgjY7EJy2dnifXEOP1bw6ezch+gHCLhkkhd26WMgE4qvXtfmnuLOtT75axh6AYhE0hSgIYEAK8YUM/lWCaFuUkhRiSmVVFNLPYccc8o5l6w81UsosaSSSym1tNJrqLGmmmuptbbam28BGkum5VZaba31zqI9dubqXN8ZGH6EEUcaeZRRRxt9Ej4zzjTzLLPONrt4CQIFGMlSpEqTvtwilFZcaeVVVl1t9U2s7bDjTjvvsutuu7+jdqP6EbXPyH2NmrtR8wcova78QI3hUt6mcEonSTEDMR8diBdFgID2ipmtLkavyClmtvlgQkieXSYFR5wiBoJxOZ+2e8fuB3I/xc3g3d/Fzb9Czih0/wI5o9A9IPeM2wvUpB+6DQcgzUJ8CkMG0m/nLiy8RsrDsUodvrS9fFi9yOpzc03O0sueW7O2VB2psFbmtxqWNwxubBol9RR7C6uU3mDN4FZK3aWwR8gS9tJ7V+DqmeteU0bcu61wJmRysx2T4Pw9YtvFD5AUnLOljdz21ju51HHHCrHsh21hnU5eJY3uq9mZXSw3m1uT6e6lIH5drF43uP5qX13ExXLWtyuaurPvr1dyb9vCj7qxa1spr9qDdGyoxTPTZb75jv23+W6JLzLDJ+uvZcx+Zf47Ksf819Z/XCiYR+OtfWn+s/U/4H8HxTyi8hPznxeqz6CYC5UvXPDNADA/c8HvBoB55YI/CQDzvQT4dQCY93X+MgBM79LhC8l95AAluIwqgZuLsGdGU4oSx14qOfbiLxMSDCe7Ez99naWlVZkoH58oE/wgghSisKItM+2zs6COUbaDzXotSBtf2amy5fUGxXa/+dvXLybq7CDt7e1uZdu9wFbkhaFgBb5Uka083sa5pQ4ctHK+bgnl3OIKXp3z+P0Y56mO3ep6NBz3G20hzpu/ff1yIqoIVikQac+wKTwHCArhAWLsWnZwqRAQwcQ4MTa730BPQ5Ge5iN45h+BZn890Q2eqoav4DPv+D3Ad276TQDNA4J/BZz55oVfAAhzgYb5gOEjhC8BvG46EH4C0Dyn358BZ37nhq+yzzyn359lnwE9PwTtA0HNdjtshtRKzSPWlsU5WRL8LOi9lQMCSfJAcS0tDYxdezOMoIyUr7nmcu2S6SW2iaBbMXOX2JWgWPRjV9rH53Xkiu+hyQOAS5RsZXtl3phGPPnWkGhg1q+CmIaLKctOrcuea6+dEZUj1ILSBED0aUujbiMzppVGyWG0G1T6D6FFSXXEUtIqqC4k7Eq9a6WR3SVuFFVQEapT7b56IkVGXTOrHu0jwud+9Jq21wLlFtq3+YKgDHWhlUPT/EfHzZo76jpml7cXHNtNpEptTwkSlZJphY5MTnnzOulBA3VM8gSkMBNKvKB5Q24TtbyrE9oi5HMfQcxsWRkTPd3Qw7k1ihu4AdTG223mwi46Fi0CGE28mMiJEO2ZzQ9XklM/QGyjBuodJSp7JDCyey3aBUtdQ7RbQNspRor80ALq3ar06oH94IqCCg7qk6iVNtCsDOIoZM0gh+5fCOLQLW4hN1lbZHYXCSp2sJau5rek5nKLoxBmlVQLBmFdLJIezDF9pzCp2l41+qQPuAKDXj5MYonEng7tDojg5/tQ/mmenCjJjCh9R7UFlT1k4Zc6kfaNdajcbKGsWWlclED4G5mxhf3TsrDvIj1lu7jcrCzD7iGFuEoTuye9Oj1hdcRLXsnRq5S8I0gsTbsxs2bm6M7NgPKg9fJzOFQtWYADnfY49HaaXx60pVmfIZ44SSZICq8KkTrSFpE6UhkZvyUiaq3heo/oIxE8P7LG1SF5jUZb+LseVG0bSdYViy2QIl1GE22nsDpAE0QMAHi0mzOLdnKgTFA3kz0PyIQOCVE1RiY13OqaIRn+dKRbXDCuhUDIlOXc6ORX7Fi6Ta1rsHF/Zko0ewRetIPGlbRw5MdYZUAccNqS2J0Vb8fSnovI1vHiiO5J3y9xTnIPnskK6sD5BYxl6ZDQ5HWrlpNuVgYUxi752+Eb8eTElgHBAX9DCq6ciJqtsrIxCePFZuU7PeQ5dY5msSd39GJ1GtFkVMkkRKHbpbdsphImoim4Ul0k2NIe1BHUU/VrUiQH7JN31mOS1UajS0RMsoiM1RJdtGXSaKRM0gkm3sozkpWPHFQDAVvKE24hwlRklrUHYcVKPU/0e942EZ5dZQkrG0dawH19IYDBNrSi3bAez3hSwn0ogm81MK/nemJa0tJh458WRgrVLlxhtMsovlwFCTbuRQsKove+SXz6XGIEQ486x85TlVjOGnYSyHkWILwg6hP38Ls97yKBHoXQS9xVIZiM5k+hUD1cyaDScHccwU2jpxkDLrQTOPRSqN/VZvOmVYBOBuykhKrmWRKZMG6E1dkM/mluhFRdrsYi+UmTlgE8Z4ZnEa4MQtvOr3UF/m+NrBAKZEY3kkPQmJ1rBIiKIWJ4GvhsUiEOMoHYZkV2VYGg+AbJEWOHQCnsrSk750geTDl6gO5+jp+qWl+VGKrPZDKeLVhF1ZPR9kzVbhhupBoIL7ZNgnpP1o5lKIAl5OCgihVUPi1PtS5Kmxu+0p1Q8Ql8cs5Ri3aEXCmWHqYXdViGplNA1ozZNzbne0PBPe2wwanUwSggQMaTl9q0IUIK7ICbnBZDU+LQcxRItqamJdqdi8DE0hxCsbBWC9PvWunmUAKJyJXtqiPvKj5I0BzRb3aA068GTg+ruvNDb96v+rTxQkqym3L6fkrutsO+kFDc9KIb0POYKhWXE7BFRZL2kKGZWye9kknUwTMCM7ytHiLbT0sPmQSCI/9mnatY2SbPqIht+ENaRSthb+nKBwPL4HegG10sFdd3Il+P8LZAUvQoYThK+UAYnaSNfikf4W+kzvC4QK6W3SLOQJ64EVh0XmYOpFEqdXktetPDbXqWVrqhelPrBimJ+yN2ypzMuUiRQRZTzfA2caiUAAtPh7chyF27bhi/iw9M5I00F91Co1EnMgxjcRgZObCWao1gQ/4F1UMUWnSt9yzoCC4iMhPhSCeIMtuoExGtn+pO7MDW1uxhUDWgH7aPi6m2iXrekQnWaRyywECdxpGtEYZjdJq4B9+AntPamaAn18HPdra/KdMukQRFny+0w5kVGnJLxFdNHKPhCIUKMYgNSqIkhj53eEoUaYlgHi2XKG3A4KL1qhFzk7UM+DHDIt/2grhYHV2N9XpGimGE9aykTYkIyAXtQmUtRJw/rkMPUQ4lwc2m4s5iE/W663mpl44iQseI6ic9KImzo5Ao0z0gCI+4ORFPyufeR4pKvNAInHq3LRGGVJ5O+vjt7bUtN5OnVCL2iGdiGQ+z+9lQV9ZmMhJOh/yz1olMNhMAaH78MIj+SZlpqiQIN3hj1+PeGNTiHaJS+4ue9mVS+yupNdK/yun3jDY/SemHvqfTyTitquioW0TsVSON12PFM1ryqM32qqY+6cG+PZ02YhZLwJK6p0HitCRDWMg2dWAmot9rnyOOzptC+UEKxSSl9X0y6zRxHfx2I+QdGnoWHxfep4IsAFPqyVV7ERXBButnlqpH5a5NJEXeKF46LuVvFFMuygFA7k+wc7lX5m/IsaGFhW0O7RIMCkA5Ms1MTwOunkzbyVuVIiTOQCChsZEa+nQt0QvSWMLyI9CZ4EU6kctQQ7ToG1ysMV+GpaDQjhAfms0EnWYzVYbgQIrCWhUqy4hGIFVXC/UMrwZDyHdcOBv9JnSYgQYFXlTmjzq9djiIS4zlX616eo+h3SEoKSuLAhlQdLlU4wm6mCcdHjPl0eike9RzRsiXQj7oDkU7QCQ9FZE/IGNF+ys2hb6LjGqnFAzJtZLIaf9WPEWPjU5Hb1QD6dsqDE6801Y0QgE8x7iIOATtSdE1SrpeD1m0xgPyoEEYWkVbKLVtajftASUf2e8DTR1lUHUsJhS0ESteEgpg9MWkuIhxRx9EX0cjMibmBPFEBx7evS3V/aRW9sfVmbYCWEg0LbVUleE1RyvlSNU+pgGysictpzb3PnKLc92SvauepzUZzQ90tMS0aA1RJIgb+kUih0bHUN8C//Ux9iwOHY6SqbV3opLc08Qf2g6QvRXmJkxg6Vfl3LxKfbp3PVeQ72a+Jr75kPkx0MhRYSkytepxCKJDD9CL+mwBBZ0TzAWHDU+IkVek0YzUaQqkhvhcZPc5QtGHVm9nni/48nrVZ3WF7gK1aimgsDc9bWfyEmHDPSw9y0XYeipCH0uuNoKEHOtJTwmOcFENN2prWDIKHKQyE1ltAp0PEpjZuas3p5lz2KgjzwksNh714JyuXC4Rg2y7r1h6CMYy1JNkSMqtjCeOBnSTHQoDfS5ieGdJEIxvbDZThSfiMVzL6BmKjAgVoJ7xPm0W4jeqD4tORAs2YUuyCV0qyvTKdDQ9DIjOoY+7ENY7XX4c7uFgXPszPRJp/ZztJOoZRI2PAp34auqrrmUbVUvlpndDtmP00ggiD2ghyIDSjD7ZS1hLNKNvCMUGyZEYVGj64tjpBxKaC170ytjgxMSOzKRDpDWpBIulaDKRphkcrwWMcIgqX9SFQFYQse2E4SJ0NqEua9M8VW1BEITsNK25Pf00Abm2iD43hfIuTWZvPYVQwDOQdJRKacxM2QhQ+KDCoBFahkdxJG1wQo4YmqF+OjDyKZFOdGo5XpGXfarfVcnDnILq829k1YekupbkxfwsDX739dcTfbM9NtT2dUij8VOL7YtWmJueD1zpTlfIjrF0l2xe7UMR/8NX880LfwmeudH7FnhfNTjmHb+/hM18/4YXz2jewdPnIg/H5U/wPT1h6y8fdyiA5gHBvwLQ/P6NrwE0z+n3CwCntpqwGbe7Ol0rVj+r4Mz5sEK/P6wAqyr3a5qW89CX7IcjyvlcggsIIIgX7+ozA320+3C9ebvBbT0t1UfOctzp9OmtepGWVdUnlYKqI4odLN/Ps91xzhWYytdtFqrpPHO9Wqel53GokYYosQUtQzcEC+vD3Wsd8NOVrnXij12ZRzPctXxAysjUwNWHuy8Xet7UeSiOD1QYu7VeWf+18RGB2zYd5C+Nv7ekT9vZ1LUl+2y9eTD/00qP29Ln7cz2hfXmxVovN/a1/eTa20o/QeVywDfsN/8G/KzPjv4F+OcjMf8C/FXMPwEfnjJPD3N/evP5qEIPWVsQ1D76XT+q4M9HFZDHiMNyPpbggj/JDRvsLc38H+dq2TIzvz/qAAABhWlDQ1BJQ0MgcHJvZmlsZQAAeJx9kTtIw1AUhv+makUqDnaQ4pChOogFX4ijVqEIFUKt0KqDyU1f0KQhSXFxFFwLDj4Wqw4uzro6uAqC4APExdVJ0UVKPDcttIjxwuF+/Pf+P+eeCwi1EtOsjjFA020zGY+J6cyqGHhFF8JU4xiRmWXMSVICnuvrHj6+30V5lve9P1evmrUY4BOJZ5lh2sQbxNObtsF5nzjECrJKfE48alKDxI9cVxr8xjnvssAzQ2YqOU8cIhbzbay0MSuYGvEUcUTVdMoX0g1WOW9x1koV1uyTvzCY1VeWuU41iDgWsQQJIhRUUEQJNqK066RYSNJ5zMMfdv0SuRRyFcHIsYAyNMiuH/wPfs/Wyk1ONJKCMaDzxXE+hoDALlCvOs73sePUTwD/M3Clt/zlGjDzSXq1pUWOgL5t4OK6pSl7wOUOMPBkyKbsSn4qIZcD3s/omzJA/y3Qs9aYW/Mcpw9AimaVuAEODoHhPGWve7y7u31u/95pzu8HqdtyvTyK7x8AAAAwUExURTmE/1aM/22a/4iq/5S4/5e9/rHB/6fK/sXU/7rY/NLc/77m++bq//X0//r8//3//G5KUF4AAAABYktHRACIBR1IAAAACXBIWXMAAC4jAAAuIwF4pT92AAAAB3RJTUUH4wYaBjQZNyymUgAAAhlJREFUaN7t2j1IAzEUAODr7CJOilYHS1GoSgWLFFtHi4JCN+mkQh2LCi6OrpajVgfpIIhkU8EfSsmkODgp4uai4CaUGxTR0t5Z73q9Xt4l19LF4WU6LsnX5F7ykqHS4kFbZV861NoqPwgggAACCCCAAAIIIIDA/wZKkl66QieNlRUSlDyhdOMr9W680+NLQ2CO6iUfD1t1pWDsXis+L4cVi1yayFFaiA8pHIDSbMSsKg+eGg+3gfrvLyWMVnvdCg+g6y9m4zOz303KfKg3u4hwgcKIUfMWtSY+W5tTT70VXXvgAXTD6OS3Zq7VHo9yVqtCHxc41+23FIhYuWEAlGZeeEBe77qtAOAx1wjkozyADvzFywvXzAy1lUku0F998SnDGfTagYzCA/7C8Ahn8LllB65kHjBVfZGEM3i196eFMdEIAhA4ZgDqFXyDygAEVlkgJohCaRoCwyywKVgH33AZaR0skBWsxG8YRRUAu4K98GUHio7AuWA3MiMgrYxAzwfMNyAtfAMjIzFRIE1HwcyJzDog7uuglpX9ZlYOQEC8EheYoCUhIN4LLGDfjcRpN17KIuBDBoA4H7CAPSMR94zEAtqKAgAmJ46KAVtWJg45jcnKAFD9ABCeCwDQnuYtbNL9ZIKAumydjWZIrhPcsxECLZ7ODoD2Hpxt/n7gBHBuKJLHt4PXPAQQQAABBBBAAAEEEHAH2v37wC/ruS/jsJpmFQAAAABJRU5ErkJggg==
+      mediatype: image/png
   version: 0.0.1
+  maintainers:
+    - email: baiju.m.mail@gmail.com
+      name: Baiju Muthukadan
+    - email: pavel.macik@gmail.com
+      name: Pavel Macík
   maturity: alpha
   provider:
     name: Red Hat
+  links:
+    - name: Source Code
+      url: https://github.com/pmacik/postgresql-operator
   labels:
     name: postgresql-operator
   selector:
@@ -86,13 +100,14 @@ spec:
             selector:
               matchLabels:
                 name: postgresql-operator
+            strategy: {}
             template:
               metadata:
                 labels:
                   name: postgresql-operator
               spec:
                 serviceAccountName: postgresql-operator
-                containers:
+                containers: 
                   - name: postgresql-operator
                     image: REPLACE_IMAGE
                     imagePullPolicy: Always
@@ -109,6 +124,7 @@ spec:
                             fieldPath: metadata.name
                       - name: OPERATOR_NAME
                         value: postgresql-operator
+                    resources: {}
   # CRD(s)
   customresourcedefinitions:
     owned:
