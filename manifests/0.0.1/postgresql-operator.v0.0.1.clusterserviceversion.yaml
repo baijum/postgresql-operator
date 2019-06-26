@@ -10,6 +10,7 @@ metadata:
     containerImage: REPLACE_IMAGE
     createdAt: 'REPLACE_CREATED_AT'
     description: The operator that manages PostgreSQL databases.
+    repository: https://github.com/baijum/postgresql-operator
 spec:
   displayName: PostgreSQL Database
   description: "The operator that manages PostgreSQL databases."
@@ -27,7 +28,7 @@ spec:
     name: Red Hat
   links:
     - name: Source Code
-      url: https://github.com/pmacik/postgresql-operator
+      url: https://github.com/baijum/postgresql-operator
   labels:
     name: postgresql-operator
   selector:
