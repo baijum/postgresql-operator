@@ -9,6 +9,8 @@ spec:
     listKind: DatabaseList
     plural: databases
     singular: database
+    shortNames:
+      - db
   scope: Namespaced
   subresources:
     status: {}
@@ -32,7 +34,3 @@ spec:
         status:
           type: object
   version: v1alpha1
-  versions:
-  - name: v1alpha1
-    served: true
-    storage: true

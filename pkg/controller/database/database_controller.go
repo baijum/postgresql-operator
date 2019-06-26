@@ -24,6 +24,7 @@ import (
 var log = logf.Log.WithName("controller_database")
 
 const (
+	// ServiceName is the name of the service
 	ServiceName = "postgresql"
 )
 
@@ -52,7 +53,6 @@ func add(mgr manager.Manager, r reconcile.Reconciler) error {
 		return err
 	}
 
-	// TODO(user): Modify this to be the types you create that are owned by the primary resource
 	// Watch for changes to secondary resource Pods and requeue the owner Database
 
 	// Watch for Deployment Update and Delete event
@@ -98,7 +98,6 @@ type ReconcileDatabase struct {
 
 // Reconcile reads that state of the cluster for a Database object and makes changes based on the state read
 // and what is in the Database.Spec
-// TODO(user): Modify this Reconcile function to implement your Controller logic.  This example creates
 // a Pod as an example
 // Note:
 // The Controller will requeue the Request to be processed again if the returned error is non-nil or
@@ -158,8 +157,9 @@ func (r *ReconcileDatabase) Reconcile(request reconcile.Request) (reconcile.Resu
 		if err != nil {
 			return reconcile.Result{}, err
 		}
-		// Service created successfully - don't requeue
-		return reconcile.Result{}, nil
+		// Service created successfully update status with the connection details
+		instance.Status.DBConnectionIP = service.Spec.ClusterIP
+		instance.Status.DBConnectionPort = service.Spec.Ports[0].TargetPort.IntVal
 	} else if err != nil {
 		return reconcile.Result{}, err
 	}
@@ -178,9 +178,16 @@ func (r *ReconcileDatabase) Reconcile(request reconcile.Request) (reconcile.Resu
 		if err != nil {
 			return reconcile.Result{}, err
 		}
-		// Secret created successfully - don't requeue
-		return reconcile.Result{}, nil
+		// Secret created successfully update status with the reference
+		instance.Status.DBPassword = secret.Name
 	} else if err != nil {
+		return reconcile.Result{}, err
+	}
+
+	// Update status
+	err = r.client.Status().Update(context.TODO(), instance)
+	if err != nil {
+		log.Error(err, "Failed to update status")
 		return reconcile.Result{}, err
 	}
 
