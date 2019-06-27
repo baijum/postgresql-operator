@@ -179,7 +179,8 @@ func (r *ReconcileDatabase) Reconcile(request reconcile.Request) (reconcile.Resu
 			return reconcile.Result{}, err
 		}
 		// Secret created successfully update status with the reference
-		instance.Status.DBPassword = secret.Name
+		instance.Status.DBCredentials = secret.Name
+		instance.Status.DBName = "postgres"
 	} else if err != nil {
 		return reconcile.Result{}, err
 	}
@@ -234,7 +235,10 @@ func newSecretForCR(cr *postgresqlv1alpha1.Database) *corev1.Secret {
 			Labels:    labels,
 		},
 		Type: corev1.SecretTypeOpaque,
-		Data: map[string][]byte{"password": []byte("password")},
+		Data: map[string][]byte{
+			"user":     []byte("postgres"),
+			"password": []byte("password"),
+		},
 	}
 	return secret
 }
