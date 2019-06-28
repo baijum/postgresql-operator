@@ -137,7 +137,14 @@ func (r *ReconcileDatabase) Reconcile(request reconcile.Request) (reconcile.Resu
 			return reconcile.Result{}, err
 		}
 		// Deployment created successfully - don't requeue
-		return reconcile.Result{}, nil
+		instance.Status.DBName = dbName(instance)
+		// Update status
+		err = r.client.Status().Update(context.TODO(), instance)
+		if err != nil {
+			log.Error(err, "Failed to update status")
+			return reconcile.Result{}, err
+		}
+		return reconcile.Result{Requeue: true}, nil
 	} else if err != nil {
 		return reconcile.Result{}, err
 	}
@@ -160,6 +167,13 @@ func (r *ReconcileDatabase) Reconcile(request reconcile.Request) (reconcile.Resu
 		// Service created successfully update status with the connection details
 		instance.Status.DBConnectionIP = service.Spec.ClusterIP
 		instance.Status.DBConnectionPort = service.Spec.Ports[0].TargetPort.IntVal
+		// Update status
+		err = r.client.Status().Update(context.TODO(), instance)
+		if err != nil {
+			log.Error(err, "Failed to update status")
+			return reconcile.Result{}, err
+		}
+		return reconcile.Result{Requeue: true}, nil
 	} else if err != nil {
 		return reconcile.Result{}, err
 	}
@@ -180,15 +194,13 @@ func (r *ReconcileDatabase) Reconcile(request reconcile.Request) (reconcile.Resu
 		}
 		// Secret created successfully update status with the reference
 		instance.Status.DBCredentials = secret.Name
-		instance.Status.DBName = "postgres"
+		// Update status
+		err = r.client.Status().Update(context.TODO(), instance)
+		if err != nil {
+			log.Error(err, "Failed to update status")
+			return reconcile.Result{}, err
+		}
 	} else if err != nil {
-		return reconcile.Result{}, err
-	}
-
-	// Update status
-	err = r.client.Status().Update(context.TODO(), instance)
-	if err != nil {
-		log.Error(err, "Failed to update status")
 		return reconcile.Result{}, err
 	}
 
@@ -282,6 +294,10 @@ func newDeploymentForCR(cr *postgresqlv1alpha1.Database) *appsv1.Deployment {
 									Name:  "POSTGRES_PASSWORD",
 									Value: "password",
 								},
+								{
+									Name:  "POSTGRES_DB",
+									Value: dbName(cr),
+								},
 							},
 						},
 					},
@@ -290,6 +306,13 @@ func newDeploymentForCR(cr *postgresqlv1alpha1.Database) *appsv1.Deployment {
 		},
 	}
 	return deployment
+}
+
+func dbName(cr *postgresqlv1alpha1.Database) string {
+	if cr.Spec.DBName != "" {
+		return cr.Spec.DBName
+	}
+	return "postgres"
 }
 
 func int32Ptr(i int32) *int32 {
