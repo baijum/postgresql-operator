@@ -43,10 +43,10 @@ deploy-operator-package: push-operator-image get-tag
 	$(eval QUAY_API_TOKEN := $(shell curl -sH "Content-Type: application/json" -XPOST https://quay.io/cnr/api/v1/users/login -d '{"user":{"username":"'${QUAY_USERNAME}'","password":"'${QUAY_PASSWORD}'"}}' | jq -r '.token'))
 	@operator-courier push $(OPERATOR_MANIFESTS) $(POSTGRESQL_APPR_NAMESPACE) $(POSTGRESQL_APPR_REPOSITORY) $(POSTGRESQL_OPERATOR_VERSION)-$(TAG) "$(QUAY_API_TOKEN)"
 
-.PHONY: install-operator
-install-operator: 
+.PHONY: install-operator-source
+install-operator-source:
 	$(eval INSTALL_DIR := deploy/install)
-	sed -e 's,REPLACE_NAMESPACE,$(POSTGRESQL_APPR_NAMESPACE),g' ./$(INSTALL_DIR)/operatorsource.yaml | oc apply -f -
+	sed -e 's,REPLACE_NAMESPACE,$(POSTGRESQL_APPR_NAMESPACE),g' ./$(INSTALL_DIR)/operatorsource.yaml | sed -e 's,REPLACE_REPOSITORY,$(POSTGRESQL_APPR_REPOSITORY),g' | oc apply -f -
 
 .PHONY: uninstall-operator
 uninstall-operator:
@@ -60,4 +60,4 @@ uninstall-operator:
 	@-oc delete csv postgresql-operator.v$(POSTGRESQL_OPERATOR_VERSION) -n openshift-operators
 
 .PHONY: reinstall-operator
-reinstall-operator: uninstall-operator deploy-operator-package install-operator
+reinstall-operator: uninstall-operator deploy-operator-package install-operator-source
