@@ -136,16 +136,17 @@ func (r *ReconcileDatabase) Reconcile(request reconcile.Request) (reconcile.Resu
 		if err != nil {
 			return reconcile.Result{}, err
 		}
-		// Deployment created successfully - don't requeue
-		instance.Status.DBName = dbName(instance)
-		// Update status
-		err = r.client.Status().Update(context.TODO(), instance)
-		if err != nil {
-			log.Error(err, "Failed to update status")
-			return reconcile.Result{}, err
-		}
+		deploymentFound = deployment
 		return reconcile.Result{Requeue: true}, nil
 	} else if err != nil {
+		return reconcile.Result{}, err
+	}
+	// Deployment created successfully - don't requeue
+	instance.Status.DBName = dbName(instance)
+	// Update status
+	err = r.client.Status().Update(context.TODO(), instance)
+	if err != nil {
+		log.Error(err, "Failed to update status")
 		return reconcile.Result{}, err
 	}
 
@@ -158,23 +159,23 @@ func (r *ReconcileDatabase) Reconcile(request reconcile.Request) (reconcile.Resu
 	// Check if this Service already exists
 	serviceFound := &corev1.Service{}
 	err = r.client.Get(context.TODO(), types.NamespacedName{Name: service.Name, Namespace: service.Namespace}, serviceFound)
-	if err != nil && errors.IsNotFound(err) {
+	if err != nil && errors.IsNotFound(err) { // service not found
 		reqLogger.Info("Creating a new Service", "Service.Namespace", service.Namespace, "Service.Name", service.Name)
 		err = r.client.Create(context.TODO(), service)
 		if err != nil {
 			return reconcile.Result{}, err
 		}
-		// Service created successfully update status with the connection details
-		instance.Status.DBConnectionIP = service.Spec.ClusterIP
-		instance.Status.DBConnectionPort = service.Spec.Ports[0].TargetPort.IntVal
-		// Update status
-		err = r.client.Status().Update(context.TODO(), instance)
-		if err != nil {
-			log.Error(err, "Failed to update status")
-			return reconcile.Result{}, err
-		}
+		serviceFound = service
 		return reconcile.Result{Requeue: true}, nil
 	} else if err != nil {
+		return reconcile.Result{}, err
+	}
+	instance.Status.DBConnectionIP = serviceFound.Spec.ClusterIP
+	instance.Status.DBConnectionPort = serviceFound.Spec.Ports[0].TargetPort.IntVal
+	// Update status
+	err = r.client.Status().Update(context.TODO(), instance)
+	if err != nil {
+		log.Error(err, "Failed to update status")
 		return reconcile.Result{}, err
 	}
 
@@ -192,15 +193,16 @@ func (r *ReconcileDatabase) Reconcile(request reconcile.Request) (reconcile.Resu
 		if err != nil {
 			return reconcile.Result{}, err
 		}
-		// Secret created successfully update status with the reference
-		instance.Status.DBCredentials = secret.Name
-		// Update status
-		err = r.client.Status().Update(context.TODO(), instance)
-		if err != nil {
-			log.Error(err, "Failed to update status")
-			return reconcile.Result{}, err
-		}
+		secretFound = secret
 	} else if err != nil {
+		return reconcile.Result{}, err
+	}
+	// Secret created successfully update status with the reference
+	instance.Status.DBCredentials = secretFound.Name
+	// Update status
+	err = r.client.Status().Update(context.TODO(), instance)
+	if err != nil {
+		log.Error(err, "Failed to update status")
 		return reconcile.Result{}, err
 	}
 

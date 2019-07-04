@@ -1,7 +1,7 @@
 apiVersion: operators.coreos.com/v1alpha1
 kind: ClusterServiceVersion
 metadata:
-  name: postgresql-operator.v0.0.3
+  name: REPLACE_NAME.vREPLACE_VERSION
   namespace: placeholder
   annotations:
     alm-examples: '[{"apiVersion":"postgresql.baiju.dev/v1alpha1","kind":"Database","metadata":{"name":"demo-database","namespace":"openshift-operators"},"spec":{"image":"docker.io/postgres","imageName":"postgres","dbName":"postgres"}}]'
@@ -17,8 +17,8 @@ spec:
   icon:
     - base64data: REPLACE_ICON_BASE64_DATA
       mediatype: image/png
-  version: 0.0.3
-  replaces: postgresql-operator.v0.0.2
+  version: REPLACE_VERSION
+  #replaces: postgresql-operator.v0.0.3
   maintainers:
     - email: baiju.m.mail@gmail.com
       name: Baiju Muthukadan
@@ -31,10 +31,10 @@ spec:
     - name: Source Code
       url: https://github.com/baijum/postgresql-operator
   labels:
-    name: postgresql-operator
+    name: REPLACE_NAME
   selector:
     matchLabels:
-      name: postgresql-operator
+      name: REPLACE_NAME
   # Install
   installModes:
     - supported: true
@@ -50,7 +50,7 @@ spec:
     spec:
       # Role(s)
       clusterPermissions:
-        - serviceAccountName: postgresql-operator
+        - serviceAccountName: REPLACE_NAME
           rules:
             - apiGroups:
                 - ""
@@ -96,19 +96,19 @@ spec:
                 - "*"
       # Deployment(s)
       deployments:
-        - name: postgresql-operator
+        - name: REPLACE_NAME
           spec:
             replicas: 1
             selector:
               matchLabels:
-                name: postgresql-operator
+                name: REPLACE_NAME
             strategy: {}
             template:
               metadata:
                 labels:
-                  name: postgresql-operator
+                  name: REPLACE_NAME
               spec:
-                serviceAccountName: postgresql-operator
+                serviceAccountName: REPLACE_NAME
                 containers:
                   - name: postgresql-operator
                     image: REPLACE_IMAGE
@@ -117,15 +117,13 @@ spec:
                       - postgresql-operator
                     env:
                       - name: WATCH_NAMESPACE
-                        valueFrom:
-                          fieldRef:
-                            fieldPath: metadata.namespace
+                        value: ""
                       - name: POD_NAME
                         valueFrom:
                           fieldRef:
                             fieldPath: metadata.name
                       - name: OPERATOR_NAME
-                        value: postgresql-operator
+                        value: REPLACE_NAME
                     resources: {}
   # CRD(s)
   customresourcedefinitions:
