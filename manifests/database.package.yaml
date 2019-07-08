@@ -1,5 +1,5 @@
-packageName: db-operators
+packageName: REPLACE_PACKAGE
 channels:
-- currentCSV: postgresql-operator.v0.0.3
+- currentCSV: REPLACE_NAME.vREPLACE_VERSION
   name: alpha
 
