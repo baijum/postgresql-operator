@@ -288,9 +288,10 @@ func newDeploymentForCR(cr *postgresqlv1alpha1.Database) *appsv1.Deployment {
 				Spec: corev1.PodSpec{
 					Containers: []corev1.Container{
 						{
-							Name:  cr.Spec.ImageName,
-							Image: cr.Spec.Image,
-							Ports: containerPorts,
+							Name:            cr.Spec.ImageName,
+							Image:           cr.Spec.Image,
+							ImagePullPolicy: corev1.PullIfNotPresent,
+							Ports:           containerPorts,
 							Env: []corev1.EnvVar{
 								{
 									Name:  "POSTGRES_PASSWORD",
@@ -299,6 +300,10 @@ func newDeploymentForCR(cr *postgresqlv1alpha1.Database) *appsv1.Deployment {
 								{
 									Name:  "POSTGRES_DB",
 									Value: dbName(cr),
+								},
+								{
+									Name:  "PGDATA",
+									Value: "/var/lib/postgresql/data/pgdata",
 								},
 							},
 						},

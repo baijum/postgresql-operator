@@ -4,7 +4,7 @@ metadata:
   name: REPLACE_NAME.vREPLACE_VERSION
   namespace: placeholder
   annotations:
-    alm-examples: '[{"apiVersion":"postgresql.baiju.dev/v1alpha1","kind":"Database","metadata":{"name":"demo-database","namespace":"openshift-operators"},"spec":{"image":"docker.io/postgres","imageName":"postgres","dbName":"postgres"}}]'
+    alm-examples: '[{"apiVersion":"postgresql.baiju.dev/v1alpha1","kind":"Database","metadata":{"name":"demo-database","namespace":"demo-app"},"spec":{"image":"docker.io/postgres","imageName":"postgres","dbName":"postgres"}}]'
     capabilities: Full Lifecycle
     categories: 'Database'
     containerImage: REPLACE_IMAGE
@@ -18,7 +18,7 @@ spec:
     - base64data: REPLACE_ICON_BASE64_DATA
       mediatype: image/png
   version: REPLACE_VERSION
-  #replaces: postgresql-operator.v0.0.3
+  replaces: postgresql-operator.v0.0.3
   maintainers:
     - email: baiju.m.mail@gmail.com
       name: Baiju Muthukadan
