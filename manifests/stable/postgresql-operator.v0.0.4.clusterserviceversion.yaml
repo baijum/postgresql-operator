@@ -23,7 +23,7 @@ spec:
       name: Baiju Muthukadan
     - email: pavel.macik@gmail.com
       name: Pavel Macík
-  maturity: stable
+  maturity: alpha
   provider:
     name: Red Hat
   links:
