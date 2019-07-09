@@ -18,7 +18,6 @@ spec:
     - base64data: REPLACE_ICON_BASE64_DATA
       mediatype: image/png
   version: REPLACE_VERSION
-  replaces: postgresql-operator.v0.0.3
   maintainers:
     - email: baiju.m.mail@gmail.com
       name: Baiju Muthukadan
