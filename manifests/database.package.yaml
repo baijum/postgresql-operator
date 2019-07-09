@@ -1,5 +1,7 @@
 packageName: REPLACE_PACKAGE
 channels:
-- currentCSV: REPLACE_NAME.vREPLACE_VERSION
-  name: alpha
-
+- currentCSV: REPLACE_NAME.vREPLACE_STABLE_VERSION
+  name: stable
+- currentCSV: REPLACE_NAME.vREPLACE_NIGHTLY_VERSION-REPLACE_TAG
+  name: nightly
+defaultChannel: stable

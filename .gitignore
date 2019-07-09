@@ -2,6 +2,7 @@
 build/_output
 build/_test
 tmp/
+build-tag.txt
 # Created by https://www.gitignore.io/api/go,vim,emacs,visualstudiocode
 ### Emacs ###
 # -*- mode: gitignore; -*-

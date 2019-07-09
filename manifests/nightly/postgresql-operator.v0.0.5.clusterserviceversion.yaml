@@ -1,11 +1,11 @@
 apiVersion: operators.coreos.com/v1alpha1
 kind: ClusterServiceVersion
 metadata:
-  name: REPLACE_NAME.vREPLACE_VERSION
+  name: REPLACE_NAME.vREPLACE_VERSION-REPLACE_TAG
   namespace: placeholder
   annotations:
     alm-examples: '[{"apiVersion":"postgresql.baiju.dev/v1alpha1","kind":"Database","metadata":{"name":"demo-database","namespace":"demo-app"},"spec":{"image":"docker.io/postgres","imageName":"postgres","dbName":"postgres"}}]'
-    capabilities: Full Lifecycle
+    capabilities: Basic Install
     categories: 'Database'
     containerImage: REPLACE_IMAGE
     createdAt: 'REPLACE_CREATED_AT'
@@ -17,7 +17,7 @@ spec:
   icon:
     - base64data: REPLACE_ICON_BASE64_DATA
       mediatype: image/png
-  version: REPLACE_VERSION
+  version: REPLACE_VERSION-REPLACE_TAG
   maintainers:
     - email: baiju.m.mail@gmail.com
       name: Baiju Muthukadan
