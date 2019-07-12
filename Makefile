@@ -7,7 +7,7 @@ APPR_NAMESPACE ?= $(QUAY_USERNAME)-testing
 else
 APPR_NAMESPACE ?= $(QUAY_USERNAME)
 endif
-APPR_REPOSITORY ?= toy-operators
+APPR_REPOSITORY ?= db-operators
 OPERATOR_IMAGE ?= quay.io/$(APPR_NAMESPACE)/$(OPERATOR_NAME)
 OPERATOR_NAME ?= postgresql-operator
 # stable
