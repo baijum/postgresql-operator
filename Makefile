@@ -10,7 +10,7 @@ endif
 APPR_REPOSITORY ?= db-operators
 OPERATOR_IMAGE ?= quay.io/$(APPR_NAMESPACE)/$(OPERATOR_NAME)
 OPERATOR_NAME ?= postgresql-operator
-OPERATOR_VERSION ?= 0.0.4
+OPERATOR_VERSION ?= 0.0.5
 
 .PHONY: clean
 clean:
