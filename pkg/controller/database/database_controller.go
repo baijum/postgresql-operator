@@ -230,7 +230,7 @@ func (r *ReconcileDatabase) Reconcile(request reconcile.Request) (reconcile.Resu
 	if err := controllerutil.SetControllerReference(instance, configMap, r.scheme); err != nil {
 		return reconcile.Result{}, err
 	}
-	// Check if this Secret already exists
+	// Check if this ConfigMap already exists
 	configMapFound := &corev1.ConfigMap{}
 	err = r.client.Get(context.TODO(), types.NamespacedName{Name: configMap.Name, Namespace: configMap.Namespace}, configMapFound)
 	if err != nil && errors.IsNotFound(err) {
@@ -241,6 +241,14 @@ func (r *ReconcileDatabase) Reconcile(request reconcile.Request) (reconcile.Resu
 		}
 		configMapFound = configMap
 	} else if err != nil {
+		return reconcile.Result{}, err
+	}
+	// ConfigMap created successfully - update status with the reference
+	instance.Status.DBConfigMap = configMapFound.Name
+	// Update status
+	err = r.client.Status().Update(context.TODO(), instance)
+	if err != nil {
+		log.Error(err, "Failed to update status with DBConfigMap")
 		return reconcile.Result{}, err
 	}
 
