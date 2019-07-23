@@ -34,6 +34,15 @@ push-operator-image: build-operator-image get-tag
 	@echo $(QUAY_PASSWORD) | docker login quay.io -u $(QUAY_USERNAME) --password-stdin
 	docker push $(OPERATOR_IMAGE):$(OPERATOR_VERSION)-$(TAG)
 
+.PHONY: build-operator-image-stable
+build-operator-image-stable: ./vendor
+	operator-sdk build $(OPERATOR_IMAGE):$(OPERATOR_VERSION)
+
+.PHONY: push-operator-image-stable
+push-operator-image-stable: build-operator-image-stable
+	@echo $(QUAY_PASSWORD) | docker login quay.io -u $(QUAY_USERNAME) --password-stdin
+	docker push $(OPERATOR_IMAGE):$(OPERATOR_VERSION)
+
 .PHONY: deploy-operator-package
 deploy-operator-package: push-operator-image get-tag
 	$(eval OPERATOR_MANIFESTS := tmp/manifests)
