@@ -171,3 +171,13 @@ spec:
             path: dbName
             x-descriptors:
               - urn:alm:descriptor:servicebindingrequest:env:attribute
+          - description: Name of the ConfigMap to hold the DB config
+            displayName: DB Config Map
+            path: dbConfigMap
+            x-descriptors:
+              - urn:alm:descriptor:io.kubernetes:ConfigMap
+              - urn:alm:descriptor:servicebindingrequest:env:object:configmap:db.host
+              - urn:alm:descriptor:servicebindingrequest:env:object:configmap:db.port
+              - urn:alm:descriptor:servicebindingrequest:env:object:configmap:db.name
+              - urn:alm:descriptor:servicebindingrequest:env:object:configmap:db.user
+              - urn:alm:descriptor:servicebindingrequest:env:object:configmap:db.password
