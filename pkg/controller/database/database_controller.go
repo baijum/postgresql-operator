@@ -2,6 +2,7 @@ package database
 
 import (
 	"context"
+	"strconv"
 
 	postgresqlv1alpha1 "github.com/baijum/postgresql-operator/pkg/apis/postgresql/v1alpha1"
 	appsv1 "k8s.io/api/apps/v1"
@@ -26,6 +27,16 @@ var log = logf.Log.WithName("controller_database")
 const (
 	// ServiceName is the name of the service
 	ServiceName = "postgresql"
+	//DBHostKey is the config map key for DB host
+	DBHostKey = "db.host"
+	//DBPortKey is the config map key for DB port
+	DBPortKey = "db.port"
+	//DBUsernameKey is the config map key for DB username
+	DBUsernameKey = "db.username"
+	//DBPasswordKey is the config map key for DB password
+	DBPasswordKey = "db.password"
+	//DBNameKey is the config map key for DB name
+	DBNameKey = "db.name"
 )
 
 // Add creates a new Database Controller and adds it to the Manager. The Manager will set fields on the Controller
@@ -106,6 +117,7 @@ func (r *ReconcileDatabase) Reconcile(request reconcile.Request) (reconcile.Resu
 	reqLogger := log.WithValues("Request.Namespace", request.Namespace, "Request.Name", request.Name)
 	reqLogger.Info("Reconciling Database")
 
+	data := map[string]string{}
 	// Fetch the Database instance
 	instance := &postgresqlv1alpha1.Database{}
 	err := r.client.Get(context.TODO(), request.NamespacedName, instance)
@@ -120,7 +132,11 @@ func (r *ReconcileDatabase) Reconcile(request reconcile.Request) (reconcile.Resu
 		return reconcile.Result{}, err
 	}
 
-	deployment := newDeploymentForCR(instance)
+	data[DBNameKey] = dbName(instance)
+	data[DBUsernameKey] = "postgres"
+	data[DBPasswordKey] = "password"
+
+	deployment := newDeploymentForCR(instance, data)
 
 	// Set Database instance as the owner and controller
 	if err := controllerutil.SetControllerReference(instance, deployment, r.scheme); err != nil {
@@ -142,11 +158,11 @@ func (r *ReconcileDatabase) Reconcile(request reconcile.Request) (reconcile.Resu
 		return reconcile.Result{}, err
 	}
 	// Deployment created successfully - don't requeue
-	instance.Status.DBName = dbName(instance)
+	instance.Status.DBName = data[DBNameKey]
 	// Update status
 	err = r.client.Status().Update(context.TODO(), instance)
 	if err != nil {
-		log.Error(err, "Failed to update status")
+		log.Error(err, "Failed to update status with DBName")
 		return reconcile.Result{}, err
 	}
 
@@ -171,15 +187,17 @@ func (r *ReconcileDatabase) Reconcile(request reconcile.Request) (reconcile.Resu
 		return reconcile.Result{}, err
 	}
 	instance.Status.DBConnectionIP = serviceFound.Spec.ClusterIP
-	instance.Status.DBConnectionPort = serviceFound.Spec.Ports[0].TargetPort.IntVal
+	instance.Status.DBConnectionPort = int64(serviceFound.Spec.Ports[0].TargetPort.IntVal)
+	data[DBHostKey] = instance.Status.DBConnectionIP
+	data[DBPortKey] = strconv.FormatInt(instance.Status.DBConnectionPort, 10)
 	// Update status
 	err = r.client.Status().Update(context.TODO(), instance)
 	if err != nil {
-		log.Error(err, "Failed to update status")
+		log.Error(err, "Failed to update status with DBConnectionIP or DBConnectionPort ")
 		return reconcile.Result{}, err
 	}
 
-	secret := newSecretForCR(instance)
+	secret := newSecretForCR(instance, data)
 	// Set Database instance as the owner and controller
 	if err := controllerutil.SetControllerReference(instance, secret, r.scheme); err != nil {
 		return reconcile.Result{}, err
@@ -194,6 +212,7 @@ func (r *ReconcileDatabase) Reconcile(request reconcile.Request) (reconcile.Resu
 			return reconcile.Result{}, err
 		}
 		secretFound = secret
+		return reconcile.Result{Requeue: true}, nil
 	} else if err != nil {
 		return reconcile.Result{}, err
 	}
@@ -202,7 +221,26 @@ func (r *ReconcileDatabase) Reconcile(request reconcile.Request) (reconcile.Resu
 	// Update status
 	err = r.client.Status().Update(context.TODO(), instance)
 	if err != nil {
-		log.Error(err, "Failed to update status")
+		log.Error(err, "Failed to update status with DBCredentials")
+		return reconcile.Result{}, err
+	}
+
+	configMap := newConfigMapForCr(instance, data)
+	// Set Database instance as the owner and controller
+	if err := controllerutil.SetControllerReference(instance, configMap, r.scheme); err != nil {
+		return reconcile.Result{}, err
+	}
+	// Check if this Secret already exists
+	configMapFound := &corev1.ConfigMap{}
+	err = r.client.Get(context.TODO(), types.NamespacedName{Name: configMap.Name, Namespace: configMap.Namespace}, configMapFound)
+	if err != nil && errors.IsNotFound(err) {
+		reqLogger.Info("Creating a new ConfigMap", "ConfigMap.Namespace", configMap.Namespace, "ConfigMap.Name", configMap.Name)
+		err = r.client.Create(context.TODO(), configMap)
+		if err != nil {
+			return reconcile.Result{}, err
+		}
+		configMapFound = configMap
+	} else if err != nil {
 		return reconcile.Result{}, err
 	}
 
@@ -237,7 +275,7 @@ func newServiceForCR(cr *postgresqlv1alpha1.Database) *corev1.Service {
 	return svc
 }
 
-func newSecretForCR(cr *postgresqlv1alpha1.Database) *corev1.Secret {
+func newSecretForCR(cr *postgresqlv1alpha1.Database, data map[string]string) *corev1.Secret {
 	labels := map[string]string{
 		"app": cr.Name,
 	}
@@ -250,14 +288,29 @@ func newSecretForCR(cr *postgresqlv1alpha1.Database) *corev1.Secret {
 		},
 		Type: corev1.SecretTypeOpaque,
 		Data: map[string][]byte{
-			"user":     []byte("postgres"),
-			"password": []byte("password"),
+			"user":     []byte(data[DBUsernameKey]),
+			"password": []byte(data[DBPasswordKey]),
 		},
 	}
 	return secret
 }
 
-func newDeploymentForCR(cr *postgresqlv1alpha1.Database) *appsv1.Deployment {
+func newConfigMapForCr(cr *postgresqlv1alpha1.Database, data map[string]string) *corev1.ConfigMap {
+	labels := map[string]string{
+		"app": cr.Name,
+	}
+	configMap := &corev1.ConfigMap{
+		ObjectMeta: metav1.ObjectMeta{
+			Name:      cr.Name,
+			Namespace: cr.Namespace,
+			Labels:    labels,
+		},
+		Data: data,
+	}
+	return configMap
+}
+
+func newDeploymentForCR(cr *postgresqlv1alpha1.Database, data map[string]string) *appsv1.Deployment {
 	labels := map[string]string{
 		"app": cr.Name,
 	}
@@ -294,12 +347,16 @@ func newDeploymentForCR(cr *postgresqlv1alpha1.Database) *appsv1.Deployment {
 							Ports:           containerPorts,
 							Env: []corev1.EnvVar{
 								{
+									Name:  "POSTGRES_USER",
+									Value: data[DBUsernameKey],
+								},
+								{
 									Name:  "POSTGRES_PASSWORD",
-									Value: "password",
+									Value: data[DBPasswordKey],
 								},
 								{
 									Name:  "POSTGRES_DB",
-									Value: dbName(cr),
+									Value: data[DBNameKey],
 								},
 								{
 									Name:  "PGDATA",
