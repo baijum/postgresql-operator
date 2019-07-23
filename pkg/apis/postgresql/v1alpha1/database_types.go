@@ -30,6 +30,7 @@ type DatabaseStatus struct {
 	DBConnectionIP   string `json:"dbConnectionIP"`
 	DBConnectionPort int64  `json:"dbConnectionPort"`
 	DBName           string `json:"dbName"`
+	DBConfigMap      string `json:"dbConfigMap"`
 }
 
 // +k8s:deepcopy-gen:interfaces=k8s.io/apimachinery/pkg/runtime.Object

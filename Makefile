@@ -52,6 +52,20 @@ push-operator-image-nightly: get-tag
 .PHONY: package-operator
 package-operator: get-tag
 	$(eval CREATION_TIMESTAMP := $(shell date '+%Y-%m-%d %H:%M:%S'))
+
+.PHONY: build-operator-image-stable
+build-operator-image-stable: ./vendor
+	operator-sdk build $(OPERATOR_IMAGE):$(OPERATOR_STABLE_VERSION)
+
+.PHONY: push-operator-image-stable
+push-operator-image-stable: build-operator-image-stable
+	@echo $(QUAY_PASSWORD) | docker login quay.io -u $(QUAY_USERNAME) --password-stdin
+	docker push $(OPERATOR_IMAGE):$(OPERATOR_STABLE_VERSION)
+
+.PHONY: deploy-operator-package
+deploy-operator-package: push-operator-image get-tag
+	$(eval OPERATOR_MANIFESTS := tmp/manifests)
+	$(eval CREATION_TIMESTAMP := $(shell date --date="@$(TAG)" '+%Y-%m-%d %H:%M:%S'))
 	$(eval ICON_BASE64_DATA := $(shell cat ./icon/pgo.png | base64))
 	mkdir -p $(OPERATOR_MANIFESTS)
 	cp -vf manifests/stable/* $(OPERATOR_MANIFESTS)
