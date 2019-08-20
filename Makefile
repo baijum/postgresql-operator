@@ -63,7 +63,7 @@ push-operator-image-stable: build-operator-image-stable
 	docker push $(OPERATOR_IMAGE):$(OPERATOR_STABLE_VERSION)
 
 .PHONY: deploy-operator-package
-deploy-operator-package: push-operator-image get-tag
+deploy-operator-package: get-tag
 	$(eval OPERATOR_MANIFESTS := tmp/manifests)
 	$(eval CREATION_TIMESTAMP := $(shell date --date="@$(TAG)" '+%Y-%m-%d %H:%M:%S'))
 	$(eval ICON_BASE64_DATA := $(shell cat ./icon/pgo.png | base64))
