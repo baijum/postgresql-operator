@@ -147,37 +147,37 @@ spec:
             displayName: DB name
             path: dbName
             x-descriptors:
-              - urn:alm:descriptor:servicebindingrequest:env:attribute
+              - binding:env:attribute
         statusDescriptors:
           - description: Name of the Secret to hold the DB user and password
             displayName: DB Password Credentials
             path: dbCredentials
             x-descriptors:
               - urn:alm:descriptor:io.kubernetes:Secret
-              - urn:alm:descriptor:servicebindingrequest:env:object:secret:user
-              - urn:alm:descriptor:servicebindingrequest:env:object:secret:password
+              - binding:env:object:secret:user
+              - binding:env:object:secret:password
           - description: Database connection IP address
             displayName: DB IP address
             path: dbConnectionIP
             x-descriptors:
-              - urn:alm:descriptor:servicebindingrequest:env:attribute
+              - binding:env:attribute
           - description: Database connection port
             displayName: DB port
             path: dbConnectionPort
             x-descriptors:
-              - urn:alm:descriptor:servicebindingrequest:env:attribute
+              - binding:env:attribute
           - description: Database name
             displayName: DB name
             path: dbName
             x-descriptors:
-              - urn:alm:descriptor:servicebindingrequest:env:attribute
+              - binding:env:attribute
           - description: Name of the ConfigMap to hold the DB config
             displayName: DB Config Map
             path: dbConfigMap
             x-descriptors:
               - urn:alm:descriptor:io.kubernetes:ConfigMap
-              - urn:alm:descriptor:servicebindingrequest:env:object:configmap:db.host
-              - urn:alm:descriptor:servicebindingrequest:env:object:configmap:db.port
-              - urn:alm:descriptor:servicebindingrequest:env:object:configmap:db.name
-              - urn:alm:descriptor:servicebindingrequest:env:object:configmap:db.user
-              - urn:alm:descriptor:servicebindingrequest:env:object:configmap:db.password
+              - binding:env:object:configmap:db.host
+              - binding:env:object:configmap:db.port
+              - binding:env:object:configmap:db.name
+              - binding:env:object:configmap:db.user
+              - binding:env:object:configmap:db.password
