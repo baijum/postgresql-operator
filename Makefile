@@ -20,7 +20,7 @@ OPERATOR_MANIFESTS = tmp/manifests
 
 .PHONY: clean
 clean:
-	@-rm -rvf ./vendor
+	@-rm -rvf ./build/_output
 	@-rm -rvf ./tmp
 	@-rm -vf ./$(BUILD_TAG)
 

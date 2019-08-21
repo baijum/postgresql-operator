@@ -1,4 +1,4 @@
-module github.com/baijum/postgresql-operator
+module github.com/operator-backing-service-samples/postgresql-operator
 
 require (
 	contrib.go.opencensus.io/exporter/ocagent v0.4.9 // indirect
