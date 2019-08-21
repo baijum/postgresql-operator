@@ -1,14 +1,14 @@
 apiVersion: operators.coreos.com/v1alpha1
 kind: ClusterServiceVersion
 metadata:
-  name: postgresql-operator.v0.0.5
+  name: postgresql-operator.v0.0.6
   namespace: placeholder
   annotations:
     alm-examples: '[{"apiVersion":"postgresql.baiju.dev/v1alpha1","kind":"Database","metadata":{"name":"demo-database","namespace":"demo-app"},"spec":{"image":"docker.io/postgres","imageName":"postgres","dbName":"postgres"}}]'
     capabilities: Basic Install
     categories: 'Database'
-    containerImage: quay.io/pmacik/postgresql-operator:0.0.5
-    createdAt: '2019-07-23 17:19:16'
+    containerImage: quay.io/pmacik/postgresql-operator:0.0.6
+    createdAt: '2019-08-21 08:51:41'
     description: The operator that manages PostgreSQL databases.
     repository: https://github.com/baijum/postgresql-operator
 spec:
@@ -17,7 +17,7 @@ spec:
   icon:
     - base64data: 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
       mediatype: image/png
-  version: 0.0.5
+  version: 0.0.6
   maintainers:
     - email: baiju.m.mail@gmail.com
       name: Baiju Muthukadan
@@ -110,7 +110,7 @@ spec:
                 serviceAccountName: postgresql-operator
                 containers:
                   - name: postgresql-operator
-                    image: quay.io/pmacik/postgresql-operator:0.0.5
+                    image: quay.io/pmacik/postgresql-operator:0.0.6
                     imagePullPolicy: Always
                     command:
                       - postgresql-operator
@@ -147,37 +147,37 @@ spec:
             displayName: DB name
             path: dbName
             x-descriptors:
-              - urn:alm:descriptor:servicebindingrequest:env:attribute
+              - binding:env:attribute
         statusDescriptors:
           - description: Name of the Secret to hold the DB user and password
             displayName: DB Password Credentials
             path: dbCredentials
             x-descriptors:
               - urn:alm:descriptor:io.kubernetes:Secret
-              - urn:alm:descriptor:servicebindingrequest:env:object:secret:user
-              - urn:alm:descriptor:servicebindingrequest:env:object:secret:password
+              - binding:env:object:secret:user
+              - binding:env:object:secret:password
           - description: Database connection IP address
             displayName: DB IP address
             path: dbConnectionIP
             x-descriptors:
-              - urn:alm:descriptor:servicebindingrequest:env:attribute
+              - binding:env:attribute
           - description: Database connection port
             displayName: DB port
             path: dbConnectionPort
             x-descriptors:
-              - urn:alm:descriptor:servicebindingrequest:env:attribute
+              - binding:env:attribute
           - description: Database name
             displayName: DB name
             path: dbName
             x-descriptors:
-              - urn:alm:descriptor:servicebindingrequest:env:attribute
+              - binding:env:attribute
           - description: Name of the ConfigMap to hold the DB config
             displayName: DB Config Map
             path: dbConfigMap
             x-descriptors:
               - urn:alm:descriptor:io.kubernetes:ConfigMap
-              - urn:alm:descriptor:servicebindingrequest:env:object:configmap:db.host
-              - urn:alm:descriptor:servicebindingrequest:env:object:configmap:db.port
-              - urn:alm:descriptor:servicebindingrequest:env:object:configmap:db.name
-              - urn:alm:descriptor:servicebindingrequest:env:object:configmap:db.user
-              - urn:alm:descriptor:servicebindingrequest:env:object:configmap:db.password
+              - binding:env:object:configmap:db.host
+              - binding:env:object:configmap:db.port
+              - binding:env:object:configmap:db.name
+              - binding:env:object:configmap:db.user
+              - binding:env:object:configmap:db.password
