@@ -1,7 +1,7 @@
 package controller
 
 import (
-	"github.com/baijum/postgresql-operator/pkg/controller/database"
+	"github.com/operator-backing-service-samples/postgresql-operator/pkg/controller/database"
 )
 
 func init() {

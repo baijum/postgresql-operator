@@ -10,7 +10,7 @@ metadata:
     containerImage: quay.io/pmacik/postgresql-operator:0.0.6
     createdAt: '2019-08-21 08:51:41'
     description: The operator that manages PostgreSQL databases.
-    repository: https://github.com/baijum/postgresql-operator
+    repository: https://github.com/operator-backing-service-samples/postgresql-operator
 spec:
   displayName: PostgreSQL Database
   description: "The operator that manages PostgreSQL databases."
@@ -28,7 +28,7 @@ spec:
     name: Red Hat
   links:
     - name: Source Code
-      url: https://github.com/baijum/postgresql-operator
+      url: https://github.com/operator-backing-service-samples/postgresql-operator
   labels:
     name: postgresql-operator
   selector:
